@@ -1,5 +1,5 @@
-github.com/MatthewSerre/hyundai-bluelink-protobufs v0.0.0-20230314210524-36482bed1291 h1:x/qo55CyZmGmkPtadHeaMf2Zdf3r53pO4Da0b/O6hn8=
-github.com/MatthewSerre/hyundai-bluelink-protobufs v0.0.0-20230314210524-36482bed1291/go.mod h1:S6bUjdrMwk/tr03qJSWWE1GG+pRASD9n55QuHQ+6tXU=
+github.com/MatthewSerre/hyundai-bluelink-protobufs v0.0.0-20230314231352-72e67f81a70e h1:nH4Tn5gObyOoRuYUdu1kqwvj0FReHGLRAsovYPwIDPk=
+github.com/MatthewSerre/hyundai-bluelink-protobufs v0.0.0-20230314231352-72e67f81a70e/go.mod h1:S6bUjdrMwk/tr03qJSWWE1GG+pRASD9n55QuHQ+6tXU=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
 github.com/golang/protobuf v1.5.2 h1:ROPKBNFfQgOUMifHyP+KYbvpjbdoFNs+aK7DXlji0Tw=
 github.com/golang/protobuf v1.5.2/go.mod h1:XVQd3VNwM+JqD3oG2Ue2ip4fOMUkwXdXDdiuN0vRsmY=
