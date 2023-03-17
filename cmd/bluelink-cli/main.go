@@ -114,7 +114,7 @@ func main() {
 	for !exitMenu {
 		var command string
 		log.Println("Select an option from the list below and enter the corresponding number. Otherwise, enter 'exit' to close the application.")
-		log.Println("1. Display vehicle registration ID, VIN, and mileage)")
+		log.Println("1. Display vehicle registration ID, VIN, mileage, and generation)")
 		log.Println("2. Lock vehicle")
 		log.Println("3. Unlock vehicle")
 		fmt.Scan(&command)
@@ -123,6 +123,7 @@ func main() {
 			log.Println("Registration ID:", info.RegistrationID)
 			log.Println("VIN:", info.VIN)
 			log.Println("Mileage:", info.Mileage)
+			log.Println("Generation:", info.Generation)
 		case "2":
 			_, err := toggleLock(e, authStub, info, remote_actionv1.LockAction_LOCK_ACTION_LOCK)
 
@@ -131,8 +132,8 @@ func main() {
 			}
 
 			if err == nil {
-				log.Println("No error returned from the server. Sleeping for three minutes to buffer requests...")
-				time.Sleep(180 * time.Second)
+				log.Println("No error returned from the server. Sleeping for 1 minute to buffer requests...")
+				time.Sleep(60 * time.Second)
 				log.Println("Vehicle locked!")
 			}
 		case "3":
@@ -143,8 +144,8 @@ func main() {
 			}
 
 			if err == nil {
-				log.Println("No error returned from the server. Sleeping for three minutes to buffer requests...")
-				time.Sleep(180 * time.Second)
+				log.Println("No error returned from the server. Sleeping for 1 minute to buffer requests...")
+				time.Sleep(60 * time.Second)
 				log.Println("Vehicle unlocked!")
 			}
 		case "exit":
@@ -172,7 +173,7 @@ func authenticate(c authv1.AuthenticationServiceClient) (Auth, error) {
 			log.Println("Enter your password")
 			password_input, _ := terminal.ReadPassword(0)
 			password = string(password_input)
-			log.Println("\n")
+			log.Println("")
 			pin = getInput("Enter your PIN")
 			exit = true
 		case "2":
@@ -201,6 +202,15 @@ func authenticate(c authv1.AuthenticationServiceClient) (Auth, error) {
 
 	if err != nil {
 		return Auth{}, err
+	}
+
+	f, err := os.Create("token.txt")
+
+	log.Printf("%v", res.JwtToken)
+	log.Printf("%v", res.JwtExpiry)
+
+	if err != nil {
+		f.WriteString(res.JwtToken)
 	}
 
 	return Auth{ Username: res.Username, PIN: res.Pin, JWT_Token: res.JwtToken, JWT_Expiry: res.JwtExpiry }, nil
