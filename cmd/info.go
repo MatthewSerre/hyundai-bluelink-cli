@@ -6,9 +6,9 @@ package cmd
 import (
 	"bufio"
 	"context"
+	"errors"
 	"log"
 	"os"
-	"strconv"
 	"time"
 
 	infov1 "github.com/MatthewSerre/hyundai-bluelink-protobufs/gen/go/protos/information/v1"
@@ -37,17 +37,13 @@ var infoCmd = &cobra.Command{
 		}
 		defer f.Close()
 
-		var lines []string
-		scanner := bufio.NewScanner(f)
-		for scanner.Scan() {
-			lines = append(lines, scanner.Text())
+		auth, err := GetAuth(f)
+		if err != nil {
+			log.Fatalf("failed to get auth from token.txt with error; run hb auth --method [env|manual]: %v", err)
 		}
 
-		// expiryString, _, err := ReadLine(f, 4)
-
-		if lines[3] != "" {
-			i, _ := strconv.ParseInt(lines[3], 10, 64)
-			tm := time.Unix(int64(i), 0)
+		if auth.JWTExpiry != 0 {
+			tm := time.Unix(int64(auth.JWTExpiry), 0)
 		
 			now:=time.Now()
 			if now.After(tm) || now.Equal(tm) {
@@ -66,18 +62,6 @@ var infoCmd = &cobra.Command{
 		defer infoConn.Close()
 	
 		d := infov1.NewInformationServiceClient(infoConn)
-
-		expiryInt, err := strconv.ParseInt(lines[3], 10, 64)
-		if err != nil {
-			log.Fatalf("failed to parse expiry into int with error: %v", err)
-		}
-
-		auth := Auth{
-			Username: lines[0],
-			PIN: lines[1],
-			JWTToken: lines[2],
-			JWTExpiry: expiryInt,
-		}
 
 		vehicle, err := getVehicleInfo(d, auth)
 		if err != nil {
@@ -124,4 +108,19 @@ func getVehicleInfo(c infov1.InformationServiceClient, auth Auth) (Vehicle, erro
 	}
 
 	return Vehicle{ RegistrationID: res.RegistrationId, VIN: res.Vin, Generation: res.Generation, Mileage: res.Mileage }, nil
+}
+
+func GetVehicleInfo(f *os.File) (Vehicle, error) {
+	var lines []string
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+
+	if len(lines) != 4 {
+		err := errors.New("emit macho dwarf: elf header corrupted")
+		return Vehicle{}, err
+	}
+
+	return Vehicle{RegistrationID: lines[0], VIN: lines[1], Generation: lines[2], Mileage: lines[3]}, nil
 }

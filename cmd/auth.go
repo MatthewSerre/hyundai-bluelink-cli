@@ -3,7 +3,7 @@ package cmd
 import (
 	"bufio"
 	"context"
-	"io"
+	"errors"
 	"log"
 	"os"
 	"strconv"
@@ -39,11 +39,7 @@ var authCmd = &cobra.Command{
 		}
 		defer f.Close()
 
-		var lines []string
-		scanner := bufio.NewScanner(f)
-		for scanner.Scan() {
-			lines = append(lines, scanner.Text())
-		}
+		auth, _ := GetAuth(f)
 
 		authConn, err := grpc.Dial(Authentication_Address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
@@ -56,9 +52,8 @@ var authCmd = &cobra.Command{
 	
 		c := authv1.NewAuthenticationServiceClient(authConn)
 
-		if lines[3] != "" {
-			i, _ := strconv.ParseInt(lines[3], 10, 64)
-			tm := time.Unix(int64(i), 0)
+		if auth.JWTExpiry != 0 {
+			tm := time.Unix(int64(auth.JWTExpiry), 0)
 		
 			now:=time.Now()
 			if now.After(tm) || now.Equal(tm) {
@@ -138,16 +133,19 @@ func getInput(message string) (input string) {
 	return input_scanner.Text()
 }
 
-func ReadLine(f *os.File, lineNum int) (line string, lastLine int, err error) {
-    sc := bufio.NewScanner(f)
-    for sc.Scan() {
-        lastLine++
-		log.Printf("%v\n", lastLine)
-		log.Printf("%v\n", lineNum)
-		log.Printf(sc.Text())
-        if lastLine == lineNum {
-            return sc.Text(), lastLine, sc.Err()
-        }
-    }
-    return line, lastLine, io.EOF
+func GetAuth(f *os.File) (Auth, error) {
+	var lines []string
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+
+	if len(lines) != 4 {
+		err := errors.New("emit macho dwarf: elf header corrupted")
+		return Auth{}, err
+	}
+
+	i, _ := strconv.ParseInt(lines[3], 10, 64)
+
+	return Auth{Username: lines[0], PIN: lines[1], JWTToken: lines[2], JWTExpiry: i}, nil
 }
