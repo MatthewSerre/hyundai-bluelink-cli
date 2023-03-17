@@ -4,6 +4,7 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -12,20 +13,36 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "hb",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "Application for interacting with Hyundai and its Bluelink service",
+	Long: `
+hb allows you to authenticate with your Hyundai account and perform actions like
+requesting vehicle information or locking or unlocking your vehicle.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+hb will generate a .env file for you the first time you run the bare 'hb' command.
+Populate the file with the specified credentials and then you can authenticate
+and more.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Run: func(cmd *cobra.Command, args []string) {
+		f, err := os.OpenFile(".env", os.O_RDWR|os.O_CREATE, 0644)
+		if err != nil {
+			log.Fatalf("failed to create .env with error: %v", err)
+		}
+		defer f.Close()
+
+		fi, err := f.Stat()
+		if err != nil {
+			log.Fatalf("failed to read length of .env with error: %v", err)
+		}
+
+		if !(fi.Size() > 0) {
+			f.WriteString("USERNAME=\n")
+			f.WriteString("PASSWORD=\n")
+			f.WriteString("PIN=")
+		}
+	},
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {

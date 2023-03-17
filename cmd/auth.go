@@ -29,18 +29,21 @@ var Method string
 
 const Authentication_Address = "localhost:50051"
 
-// authCmd represents the auth command
 var authCmd = &cobra.Command{
 	Use:   "auth",
-	Short: "send an authentication request to Hyundai",
+	Short: "Authenticate with Hyundai",
 	Run: func(cmd *cobra.Command, args []string) {
 		f, err := os.OpenFile("token.txt", os.O_RDWR|os.O_CREATE, 0644)
 		if err != nil {
-			log.Printf("failed to create or open token file with error: %v", err)
+			log.Printf("failed to create or open token.txt with error: %v", err)
 		}
 		defer f.Close()
 
-		expiryString, _, err := readLine(f, 2)
+		var lines []string
+		scanner := bufio.NewScanner(f)
+		for scanner.Scan() {
+			lines = append(lines, scanner.Text())
+		}
 
 		authConn, err := grpc.Dial(Authentication_Address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
@@ -53,8 +56,8 @@ var authCmd = &cobra.Command{
 	
 		c := authv1.NewAuthenticationServiceClient(authConn)
 
-		if expiryString != "" {
-			i, _ := strconv.ParseInt(expiryString, 10, 64)
+		if lines[3] != "" {
+			i, _ := strconv.ParseInt(lines[3], 10, 64)
 			tm := time.Unix(int64(i), 0)
 		
 			now:=time.Now()
@@ -119,9 +122,11 @@ func authenticate(c authv1.AuthenticationServiceClient, f *os.File) (error) {
 		return err
 	}
 
-	f.WriteString(res.JwtToken)
-	f.WriteString("\n")
+	f.WriteString(res.Username + "\n")
+	f.WriteString(res.Pin + "\n")
+	f.WriteString(res.JwtToken + "\n")
 	f.WriteString(strconv.Itoa(int(res.JwtExpiry)))
+	log.Println("username, PIN, token, and expiry written to token.txt")
 
 	return nil
 }
@@ -133,10 +138,13 @@ func getInput(message string) (input string) {
 	return input_scanner.Text()
 }
 
-func readLine(f *os.File, lineNum int) (line string, lastLine int, err error) {
+func ReadLine(f *os.File, lineNum int) (line string, lastLine int, err error) {
     sc := bufio.NewScanner(f)
     for sc.Scan() {
         lastLine++
+		log.Printf("%v\n", lastLine)
+		log.Printf("%v\n", lineNum)
+		log.Printf(sc.Text())
         if lastLine == lineNum {
             return sc.Text(), lastLine, sc.Err()
         }
