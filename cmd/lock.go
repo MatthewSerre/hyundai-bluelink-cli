@@ -14,7 +14,6 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	remoteActionV1 "github.com/MatthewSerre/hyundai-bluelink-protobufs/gen/go/protos/remote_action/v1"
-	remote_action_v1 "github.com/MatthewSerre/hyundai-bluelink-protobufs/gen/go/protos/remote_action/v1"
 )
 
 type RemoteActionResponse struct {
@@ -70,7 +69,7 @@ to quickly create a Cobra application.`,
 
 		e := remoteActionV1.NewRemoteActionServiceClient(remoteActionConn)
 
-		var remoteAction remote_action_v1.LockAction
+		var remoteAction remoteActionV1.LockAction
 
 		switch Toggle {
 		case "lock":

@@ -11,7 +11,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
-	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/term"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
@@ -91,7 +91,7 @@ func authenticate(c authv1.AuthenticationServiceClient, f *os.File) (error) {
 	case "manual":
 		username = getInput("username\n")
 		log.Println("password")
-		password_input, _ := terminal.ReadPassword(0)
+		password_input, _ := term.ReadPassword(0)
 		password = string(password_input)
 		log.Println("")
 		pin = getInput("PIN\n")
