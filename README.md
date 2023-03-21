@@ -22,4 +22,4 @@ Create an issue and/or a pull request and I will take a look.
 
 ***
 
-This project is not affiliated with Hyundai in any way.
+This project is not affiliated with Hyundai in any way. Credit to [TaiPhamD](https://github.com/TaiPhamD) and his `bluelink_go` project [link](https://github.com/TaiPhamD/bluelink_go) for inspiration and some code snippets.
