@@ -8,7 +8,7 @@ A repository for a CLI application that uses client-side code generated from the
 
 ## Usage
 
-Run `go run main.go` to run the bare CLI command, which will generate a `.env` with fields for credential values. Then run `go run main.go -h` to see the available commands. In a local environment, the CLI needs to connect to the services hosted in these repositories:
+Run `go run main.go` to run the bare CLI command, which will generate a `.env` with fields for credential values (enter the username, password, and PIN for the Hyundai account associated with the Bluelink service). Then run `go run main.go -h` to see the available commands. In a local environment, the CLI needs to connect to the services hosted in these repositories:
 
 - `hyundai-bluelink-authentication-server` [link](https://github.com/MatthewSerre/hyundai-bluelink-authentication-server)
 - `hyundai-bluelink-vehicle-information-service` [link](https://github.com/MatthewSerre/hyundai-bluelink-vehicle-information-service)
