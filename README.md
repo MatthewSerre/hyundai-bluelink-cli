@@ -11,17 +11,17 @@ A repository for a CLI application that uses client-side code generated from the
 Use the existing binary to run the bare CLI command
 
 ```
-bin/hb
+bin/cmd/hb
 ``` 
 
 or make changes to the code, build a new binary, and run the bare CLI command
 
 ```
 task build
-bin/hb
+bin/cmd/hb
 ```
 
-Doing so will generate a `.env` with fields for credential values (enter the username, password, and PIN for the Hyundai account associated with the Bluelink service). Then run `bin/hb -h` to see the available commands. In a local environment, the CLI needs to connect to the services hosted in these repositories:
+Doing so will generate a `.env` with fields for credential values (enter the username, password, and PIN for the Hyundai account associated with the Bluelink service). Then run `bin/cmd/hb -h` to see the available commands. In a local environment, the CLI needs to connect to the services hosted in these repositories:
 
 - `hyundai-bluelink-authentication-server` [link](https://github.com/MatthewSerre/hyundai-bluelink-authentication-server)
 - `hyundai-bluelink-vehicle-information-service` [link](https://github.com/MatthewSerre/hyundai-bluelink-vehicle-information-service)
